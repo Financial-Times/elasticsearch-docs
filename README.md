@@ -5,3 +5,4 @@ This repo contains all Elastisearch realted documents like guides, investigation
 Wiki pages:
 * Getting started - https://github.com/Financial-Times/elasticsearch-docs/wiki/Getting-Started
 * Monitoring and Deployment - https://github.com/Financial-Times/elasticsearch-docs/wiki/Monitoring-and-Deployment
+* Amazon Elasticsearch Service - https://github.com/Financial-Times/elasticsearch-docs/wiki/Amazon-Elasticsearch-Service
