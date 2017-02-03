@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >
+  Template to spin-up an Elasticsearch cluster for SAPI v1
+
+Parameters:
+  TagEnvironment:
+    Description: Tag detail for the Environment (d = development, t = testing/pre-prod, p = production)
+    Type: String
+    AllowedValues:
+      - 'd'
+      - 't'
+      - 'p'
+    Default: d
+  CocoEnvironmentTag:
+    Description: Which enviroment this cluster is attached to (eg. prod-uk).  Must be no more than 12 characters.
+    Type: String
+
+Resources:
+  ElasticsearchDomain:
+    Type: "AWS::Elasticsearch::Domain"
+    Properties:
+      DomainName: !Join [ "", [ "upp-sapi-v1-", !Ref CocoEnvironmentTag ] ]
+      ElasticsearchClusterConfig:
+        DedicatedMasterEnabled: "true"
+        InstanceCount: "4"
+        ZoneAwarenessEnabled: "true"
+        InstanceType: "m3.xlarge.elasticsearch"
+        DedicatedMasterType: "m3.medium.elasticsearch"
+        DedicatedMasterCount: "3"
+      EBSOptions:
+        EBSEnabled: true
+        Iops: 0
+        VolumeSize: 25
+        VolumeType: "gp2"
+      SnapshotOptions:
+        AutomatedSnapshotStartHour: "0"
+      AccessPolicies:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              AWS: "arn:aws:iam::027104099916:user/content-containers-apps"
+            Action: "es:*"
+            Resource: !Join [ "", [ "arn:aws:es:", !Ref "AWS::Region", ":027104099916:domain/upp-sapi-v1-", !Ref CocoEnvironmentTag, "/*" ] ]
+      AdvancedOptions:
+        rest.action.multi.allow_explicit_index: "true"
+      Tags:
+      - Key: env
+        Value: !Ref TagEnvironment
+      - Key: teamDL
+        Value: "universal.publishing.platform@ft.com"
+      - Key: systemCode
+        Value: "SAPI-V1-ES"
+      - Key: ipcode
+        Value: "P490"
+      - Key: description
+        Value: "SAPI-V1-ES"
